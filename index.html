@@ -202,21 +202,49 @@ function num(v){
   return isNaN(n) ? null : n;
 }
 function str(v){ return (v==null) ? "" : String(v).trim(); }
+function normHeader(s){ return str(s).replace(/[\s＊*]/g,"").replace(/\n/g,""); }
 
-/* CSV 欄位是固定位置對應（A=0 ... AC=28），不是用標題文字比對，
-   這樣即使 Sheet 上方有合併儲存格/說明文字，也不會抓錯欄位 */
-function rowToProduct(row){
-  const id = str(row[0]);
-  const status = str(row[26]);
+/* 用欄位名稱找對應的欄位位置，不依賴固定第幾欄，
+   這樣 Sheet 之後增減欄位也不會讓資料對錯位置 */
+function buildColMap(rows){
+  for(const row of rows){
+    if(normHeader(row[0]).indexOf("產品ID") === 0){
+      const map = {};
+      row.forEach((cell,i)=>{
+        const key = normHeader(cell);
+        if(key && !(key in map)) map[key] = i;
+      });
+      return map;
+    }
+  }
+  return null;
+}
+function col(map, key, row){
+  const idx = map[key];
+  return (idx==null) ? "" : row[idx];
+}
+
+function rowToProduct(row, map){
+  const id = str(col(map,"產品ID",row));
+  const status = str(col(map,"狀態",row));
   if(!id || status !== "上架中") return null;
-  const nameZh = str(row[1]);
+  const nameZh = str(col(map,"產品名稱（中）",row));
   if(!nameZh) return null;
   return {
-    id, nameZh, nameEn: str(row[2]),
-    theme: str(row[3]), theme2: str(row[4]), occasions: str(row[5]),
-    material: str(row[6]), size: str(row[7]), weight: str(row[8]), origin: str(row[9]),
-    retail: num(row[18]), moq: num(row[19]), lead: num(row[20]),
-    custom: str(row[21]), packaging: str(row[22])
+    id, nameZh,
+    nameEn: str(col(map,"產品名稱（英）",row)),
+    theme: str(col(map,"主題標籤",row)),
+    theme2: str(col(map,"次要主題",row)),
+    occasions: str(col(map,"適合場合",row)),
+    material: str(col(map,"材質／成分",row)),
+    size: str(col(map,"尺寸",row)),
+    weight: str(col(map,"重量",row)),
+    origin: str(col(map,"產地",row)),
+    retail: num(col(map,"零售價",row)),
+    moq: num(col(map,"MOQ",row)),
+    lead: num(col(map,"交期（天）",row)),
+    custom: str(col(map,"商品客製選項",row)),
+    packaging: str(col(map,"包裝客製選項",row))
   };
 }
 
@@ -239,9 +267,11 @@ function loadFromSheet(){
       })
       .then(text=>{
         const parsed = Papa.parse(text, {skipEmptyLines:true});
-        console.log("CSV 原始列數：", parsed.data.length);
-        console.log("前 8 列原始內容：", JSON.stringify(parsed.data.slice(0,8)));
-        const products = parsed.data.map(rowToProduct).filter(Boolean);
+        const map = buildColMap(parsed.data);
+        console.log("欄位對照表：", map);
+        if(!map) throw new Error("找不到標題列（找不到「產品ID」開頭的欄位）");
+        const products = parsed.data.map(row=>rowToProduct(row, map)).filter(Boolean);
+        console.log("符合上架中的商品數：", products.length);
         if(products.length===0) throw new Error("no rows parsed (raw rows="+parsed.data.length+")");
         PRODUCTS = products;
         document.getElementById("loadBanner").style.display = "none";
