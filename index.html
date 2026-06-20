@@ -239,8 +239,10 @@ function loadFromSheet(){
       })
       .then(text=>{
         const parsed = Papa.parse(text, {skipEmptyLines:true});
+        console.log("CSV 原始列數：", parsed.data.length);
+        console.log("前 8 列原始內容：", JSON.stringify(parsed.data.slice(0,8)));
         const products = parsed.data.map(rowToProduct).filter(Boolean);
-        if(products.length===0) throw new Error("no rows parsed");
+        if(products.length===0) throw new Error("no rows parsed (raw rows="+parsed.data.length+")");
         PRODUCTS = products;
         document.getElementById("loadBanner").style.display = "none";
         render(); renderTray();
