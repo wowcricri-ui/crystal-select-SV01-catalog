@@ -248,6 +248,8 @@ function rowToProduct(row, map){
     weight: str(col(map,"重量",row)),
     origin: str(col(map,"產地",row)),
     retail: num(col(map,"零售價",row)),
+    sale: num(col(map,"優惠價",row)),
+    inStock: str(col(map,"現貨",row)) === "是",
     moq: num(col(map,"MOQ",row)),
     lead: num(col(map,"交期（天）",row)),
     custom: str(col(map,"商品客製選項",row)),
@@ -309,11 +311,19 @@ function matches(p){
   return themeOk && searchOk;
 }
 
+function discountLabel(retail, sale){
+  if(!retail || !sale) return "";
+  const pct = Math.round((sale / retail) * 10);
+  return `<span style="font-size:0.65rem;background:var(--vermilion-tint);color:var(--vermilion);padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px;">${pct}折</span>`;
+}
 function priceHTML(p){
-  if(p.retail==null){
+  if(p.retail==null && p.sale==null){
     return `<div class="price">洽詢報價 <small>請透過 LINE 詢問</small></div>`;
   }
-  return `<div class="price">NT$ ${p.retail.toLocaleString()} <small>單件參考價</small></div>`;
+  if(p.sale!=null && p.retail!=null){
+    return `<div class="price">NT$ ${p.sale.toLocaleString()} <span style="font-size:0.78rem;color:var(--ink-faint);text-decoration:line-through;margin-left:2px;">NT$ ${p.retail.toLocaleString()}</span>${discountLabel(p.retail,p.sale)}</div>`;
+  }
+  return `<div class="price">NT$ ${p.retail.toLocaleString()} <small>定價</small></div>`;
 }
 function moqHTML(p){
   const moq = p.moq==null ? "洽詢" : p.moq;
@@ -327,7 +337,8 @@ function cardHTML(p){
   return `
   <div class="card" data-id="${p.id}">
     <div class="thumb" style="--c1:${cat.c1};--c2:${cat.c2};" onclick="openModal('${p.id}')">
-      <img src="images/${p.id}-1.jpg" alt="${p.nameZh}" onerror="imgFallback(this,'${cat.name}')">
+        <img src="images/${p.id}-1.jpg" alt="${p.nameZh}" onerror="imgFallback(this,'${cat.name}')">
+      ${p.inStock ? `<span style="position:absolute;left:10px;top:10px;background:#1D9E75;color:#fff;font-size:0.68rem;font-weight:700;padding:4px 10px;border-radius:999px;">● 現貨供應中</span>` : ""}
     </div>
     <div class="card-body">
       <div>
@@ -342,9 +353,9 @@ function cardHTML(p){
         <div><b>材質</b>　${p.material||"—"}</div>
         <div><b>尺寸</b>　${p.size||"—"}</div>
       </div>
-      <div class="price-row">
+      <div class="price-row" style="flex-direction:column; align-items:flex-start; gap:2px;">
         ${priceHTML(p)}
-        <div class="moq">${moqHTML(p)}</div>
+        <div style="font-size:0.68rem;color:var(--ink-faint);">${moqHTML(p)}</div>
       </div>
     </div>
     <div class="btn-row">
@@ -435,10 +446,13 @@ async function openModal(id, keepIndex){
         <div><div class="label">最小起訂量</div><div class="value">${p.moq!=null?p.moq+' 件':'洽詢'}</div></div>
         <div><div class="label">交期</div><div class="value">${p.lead!=null?'約 '+p.lead+' 天':'洽詢'}</div></div>
       </div>
-      <div class="price-row" style="border-top:none; padding-top:0;">
-        ${p.retail!=null
-          ? `<div class="price">NT$ ${p.retail.toLocaleString()} <small>單件參考價／企業大量採購請洽詢</small></div>`
-          : `<div class="price">洽詢報價</div>`}
+      <div class="price-row" style="border-top:none; padding-top:0; flex-direction:column; align-items:flex-start; gap:4px;">
+        ${p.inStock ? `<div style="display:inline-block;background:#1D9E75;color:#fff;font-size:0.72rem;font-weight:700;padding:4px 12px;border-radius:999px;margin-bottom:4px;">● 現貨供應中</div>` : ""}
+        ${p.sale!=null && p.retail!=null
+          ? `<div class="price">NT$ ${p.sale.toLocaleString()} <span style="font-size:0.78rem;color:var(--ink-faint);text-decoration:line-through;margin-left:4px;">NT$ ${p.retail.toLocaleString()}</span>${discountLabel(p.retail,p.sale)} <small>定價(建議售價)／企業大量採購請洽詢</small></div>`
+          : p.retail!=null
+            ? `<div class="price">NT$ ${p.retail.toLocaleString()} <small>定價(建議售價)／企業大量採購請洽詢</small></div>`
+            : `<div class="price">洽詢報價</div>`}
       </div>
       <div class="btn-row" style="padding:18px 0 0;">
         <button class="btn add ${added?'added':''}" style="flex:1;" onclick="toggleTray('${p.id}', event)">${added?'已加入詢價清單 ✓':'+ 加入詢價清單'}</button>
