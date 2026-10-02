@@ -540,7 +540,7 @@ document.getElementById("formBtn").addEventListener("click", ()=>{
   if(trayIds.length > 0){
     productList = trayIds.map(id=>{
       const p = PRODUCTS.find(x=>x.id===id);
-      return p ? `${p.nameZh}（${p.id}）` : "";
+      return p ? encodeURIComponent(`${p.nameZh}（${p.id}）`) : "";
     }).filter(Boolean).join("%0A");
   }
   const url = FORM_BASE + (productList ? `&${ENTRY_PRODUCTS}=${productList}` : "");
