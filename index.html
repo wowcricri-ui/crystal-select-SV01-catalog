@@ -98,6 +98,8 @@
   .tray-toggle{background:none; border:1px solid var(--hairline); border-radius:999px; padding:8px 14px; font-size:0.78rem; cursor:pointer; font-weight:500;}
   .line-btn{display:flex; align-items:center; gap:7px; background:var(--line-green); color:#fff; border:none; padding:11px 20px; border-radius:999px; font-size:0.85rem; font-weight:700; cursor:pointer; white-space:nowrap;}
   .line-btn:hover{background:var(--line-green-deep);}
+  .form-btn{display:flex; align-items:center; gap:7px; background:#fff; color:var(--jade); border:2px solid var(--jade); padding:11px 20px; border-radius:999px; font-size:0.85rem; font-weight:700; cursor:pointer; white-space:nowrap;}
+  .form-btn:hover{background:var(--jade-tint);}
   .tray-list{max-width:1180px; margin:0 auto; padding:0 24px 16px; display:none; flex-direction:column; gap:8px;}
   .tray-list.open{display:flex;}
   .tray-item{display:flex; align-items:center; justify-content:space-between; background:var(--paper); border-radius:var(--radius-sm); padding:8px 12px; font-size:0.8rem;}
@@ -151,6 +153,14 @@
       <button class="line-btn" id="lineBtn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 5.92 2 10.7c0 3.1 2.05 5.82 5.13 7.4-.23.83-.83 2.97-.95 3.43-.15.57.21.56.44.4.18-.12 2.9-1.93 4.08-2.71.42.06.86.09 1.3.09 5.52 0 10-3.92 10-8.7C22 5.92 17.52 2 12 2z"/></svg>
         前往 LINE 詢價
+      </button>
+      <button class="form-btn" id="formBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+        填寫詢價表單
+      </button>
+      <button class="form-btn" id="formBtn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+        填寫詢價表單
       </button>
     </div>
   </div>
@@ -524,6 +534,22 @@ document.getElementById("lineBtn").addEventListener("click", ()=>{
 
 document.getElementById("searchInput").addEventListener("input", e=>{
   searchTerm = e.target.value; render();
+});
+
+const FORM_BASE = "https://docs.google.com/forms/d/e/1FAIpQLSfbBLzPUME4vWZ4w_bxF0wXkDtD92l5vK9MGh1sK0bPoDOE8A/viewform";
+const ENTRY_PRODUCTS = "2010482677";
+
+document.getElementById("formBtn").addEventListener("click", ()=>{
+  let productList = "";
+  if(trayIds.length > 0){
+    productList = trayIds.map(id=>{
+      const p = PRODUCTS.find(x=>x.id===id);
+      return p ? `${p.nameZh}（${p.id}）` : "";
+    }).filter(Boolean).join("\n");
+  }
+  const url = FORM_BASE + "?usp=pp_url" +
+    (productList ? `&entry.${ENTRY_PRODUCTS}=${encodeURIComponent(productList)}` : "");
+  window.open(url, "_blank");
 });
 
 loadFromSheet();
