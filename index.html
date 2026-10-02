@@ -532,8 +532,8 @@ document.getElementById("searchInput").addEventListener("input", e=>{
   searchTerm = e.target.value; render();
 });
 
-const FORM_BASE = "https://docs.google.com/forms/d/e/1FAIpQLSfbBLzPUME4vWZ4w_bxF0wXkDtD92l5vK9MGh1sK0bPoDOE8A/viewform";
-const ENTRY_PRODUCTS = "2010482677";
+const FORM_BASE = "https://docs.google.com/forms/d/e/1FAIpQLSfbBLzPUME4vWZ4w_bxF0wXkDtD92l5vK9MGh1sK0bPoDOE8A/viewform?usp=pp_url";
+const ENTRY_PRODUCTS = "entry.2010482677";
 
 document.getElementById("formBtn").addEventListener("click", ()=>{
   let productList = "";
@@ -541,10 +541,9 @@ document.getElementById("formBtn").addEventListener("click", ()=>{
     productList = trayIds.map(id=>{
       const p = PRODUCTS.find(x=>x.id===id);
       return p ? `${p.nameZh}（${p.id}）` : "";
-    }).filter(Boolean).join("\n");
+    }).filter(Boolean).join("%0A");
   }
-  const url = FORM_BASE + "?usp=pp_url" +
-    (productList ? `&entry.${ENTRY_PRODUCTS}=${encodeURIComponent(productList)}` : "");
+  const url = FORM_BASE + (productList ? `&${ENTRY_PRODUCTS}=${productList}` : "");
   window.open(url, "_blank");
 });
 
