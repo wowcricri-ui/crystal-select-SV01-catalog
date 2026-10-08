@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crystal & Collective｜SV01 Standard Selection Catalog</title>
+<title>Crystal & Collective｜晶品SV01目錄・企業禮品</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
+  /* Crimson Pro（開源 OFL 字體，接近 Minion）放在 fonts/ 資料夾；放大 112% 讓英文和中文看起來一樣大 */
+  @font-face{font-family:'Crimson Pro'; font-weight:400; font-style:normal; font-display:swap; src:url('fonts/crimson-pro-400.woff2') format('woff2'); size-adjust:112%; unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212;}
+  @font-face{font-family:'Crimson Pro'; font-weight:500; font-style:normal; font-display:swap; src:url('fonts/crimson-pro-500.woff2') format('woff2'); size-adjust:112%; unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212;}
+  @font-face{font-family:'Crimson Pro'; font-weight:600; font-style:normal; font-display:swap; src:url('fonts/crimson-pro-600.woff2') format('woff2'); size-adjust:112%; unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212;}
+  @font-face{font-family:'Crimson Pro'; font-weight:700; font-style:normal; font-display:swap; src:url('fonts/crimson-pro-700.woff2') format('woff2'); size-adjust:112%; unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2212;}
   :root{
     --paper:#F3F2ED; --paper-deep:#ECE9E1;
     --ink:#20231F; --ink-soft:rgba(32,35,31,0.60); --ink-faint:rgba(32,35,31,0.38);
@@ -17,20 +22,22 @@
     --line-green:#06C755; --line-green-deep:#05A847;
     --card:#FFFFFF; --hairline:rgba(32,35,31,0.12);
     --radius:16px; --radius-sm:10px;
-    --serif:'Noto Serif TC', serif; --sans:'Noto Sans TC', system-ui, -apple-system, sans-serif;
+    /* 英文與數字用 Crimson Pro（接近 Minion），中文自動落到後面的思源字體 */
+    --serif:'Crimson Pro', 'Noto Serif TC', serif; --sans:'Crimson Pro', 'Noto Sans TC', system-ui, -apple-system, sans-serif;
     --shadow-card:0 1px 2px rgba(32,35,31,0.04), 0 8px 24px -12px rgba(32,35,31,0.18);
     --shadow-tray:0 -8px 30px rgba(32,35,31,0.14);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  body{background:var(--paper); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; padding-bottom:96px;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; padding-bottom:96px; font-variant-numeric:lining-nums; font-feature-settings:'lnum' 1;}
+  button, input{font-family:inherit; font-variant-numeric:lining-nums;}
   a{color:inherit;}
   header.site{position:sticky; top:0; z-index:20; background:var(--paper); border-bottom:1px solid var(--hairline);}
   .header-inner{max-width:1180px; margin:0 auto; padding:22px 24px 16px; display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;}
   .wordmark{display:flex; flex-direction:column; gap:4px;}
-  .wordmark .zh{font-family:var(--serif); font-weight:900; font-size:1.7rem; letter-spacing:0.04em; line-height:1;}
+  .wordmark .zh{font-family:'EB Garamond', 'Times New Roman', serif; font-weight:400; font-size:2.1rem; letter-spacing:0.01em; line-height:1;}
   .wordmark .en{font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--ink-soft); font-weight:600;}
-  .tagline{font-size:0.82rem; color:var(--ink-soft); margin-top:2px;}
+  .tagline{font-family:var(--serif); font-weight:500; font-size:0.88rem; color:var(--ink-soft); margin-top:4px; letter-spacing:0.02em;}
   .search-wrap{display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--hairline); border-radius:999px; padding:9px 16px; min-width:240px; flex:0 1 320px;}
   .search-wrap svg{flex-shrink:0; opacity:0.45;}
   .search-wrap input{border:none; outline:none; background:none; font-family:var(--sans); font-size:0.88rem; width:100%; color:var(--ink);}
@@ -53,7 +60,7 @@
   .thumb .ph-note{position:absolute; right:10px; bottom:10px; background:rgba(32,35,31,0.55); color:#fff; font-size:0.64rem; padding:3px 8px; border-radius:999px;}
   .card-body{padding:16px 16px 14px; display:flex; flex-direction:column; gap:10px; flex:1;}
   .name-zh{font-family:var(--serif); font-weight:700; font-size:1.02rem; line-height:1.3; cursor:pointer;}
-  .name-en{font-size:0.72rem; color:var(--ink-faint); letter-spacing:0.02em; margin-top:-6px;}
+  .name-en{font-size:0.8rem; color:var(--ink-faint); letter-spacing:0.02em; margin-top:4px; line-height:1.35;}
   .tag-row{display:flex; gap:6px; flex-wrap:wrap;}
   .tag{font-size:0.68rem; padding:3px 9px; border-radius:999px; background:var(--jade-tint); color:var(--jade-deep); font-weight:600;}
   .spec-list{font-size:0.76rem; color:var(--ink-soft); line-height:1.6;}
@@ -119,7 +126,8 @@
   @media (max-width:560px){
     .header-inner{padding:18px 16px 12px;}
     .filter-bar, main, .meta-row, .tray-bar, .tray-list, .load-banner{padding-left:16px; padding-right:16px;}
-    .wordmark .zh{font-size:1.4rem;}
+    .wordmark .zh{font-size:1.75rem;}
+    .wordmark .en{letter-spacing:0.12em;}
     .spec-grid{grid-template-columns:1fr 1fr;}
     .site-footer{padding:32px 16px 20px;}
     .footer-cols{grid-template-columns:1fr; gap:24px;}
@@ -132,8 +140,8 @@
   <div class="header-inner">
     <div class="wordmark">
       <div class="zh">Crystal & Collective</div>
-      <div class="en">SV01 Standard Selection Catalog</div>
-      <div class="tagline">晶品｜品牌價值的詮釋者</div>
+      <div class="en">Originals · Custom · Taiwan Value</div>
+      <div class="tagline">晶品SV01目錄｜企業禮品・貴賓禮・品牌限定禮</div>
     </div>
     <div class="search-wrap">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20L16.5 16.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
