@@ -275,6 +275,8 @@ function rowToProduct(row, map){
     /* Sheet 欄位已改名為「規格」；舊名「尺寸」也讀得到，兩種都相容 */
     size: str(col(map,"規格",row)) || str(col(map,"尺寸",row)),
     weight: str(col(map,"重量",row)),
+    brand: str(col(map,"品牌",row)),
+    shelfLife: str(col(map,"保存期限",row)),
     origin: str(col(map,"產地",row)),
     retail: num(col(map,"零售價",row)),
     sale: num(col(map,"優惠價",row)),
@@ -473,11 +475,13 @@ async function openModal(id, keepIndex){
         ${p.theme?`<span class="tag">${p.theme}</span>`:""}${p.theme2?`<span class="tag">${p.theme2}</span>`:""}
       </div>
       <div class="spec-grid">
+        ${p.brand ? `<div><div class="label">品牌</div><div class="value">${p.brand}</div></div>` : ""}
         <div><div class="label">適合場合</div><div class="value">${p.occasions||"—"}</div></div>
         <div><div class="label">產地</div><div class="value">${p.origin||"—"}</div></div>
         <div><div class="label">材質／成分</div><div class="value">${p.material||"—"}</div></div>
         <div><div class="label">規格</div><div class="value">${p.size||"—"}</div></div>
         ${p.weight ? `<div><div class="label">重量</div><div class="value">${p.weight}</div></div>` : ""}
+        ${p.shelfLife ? `<div><div class="label">保存期限</div><div class="value">${p.shelfLife}</div></div>` : ""}
         <div><div class="label">商品客製選項</div><div class="value">${p.custom||"—"}</div></div>
         <div><div class="label">包裝客製選項</div><div class="value">${p.packaging||"—"}</div></div>
         <div><div class="label">最小起訂量</div><div class="value">${p.moq!=null?p.moq+' 件':'洽詢'}</div></div>
