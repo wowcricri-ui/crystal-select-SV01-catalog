@@ -272,7 +272,8 @@ function rowToProduct(row, map){
     theme2: str(col(map,"次要主題",row)),
     occasions: str(col(map,"適合場合",row)),
     material: str(col(map,"材質／成分",row)),
-    size: str(col(map,"尺寸",row)),
+    /* Sheet 欄位已改名為「規格」；舊名「尺寸」也讀得到，兩種都相容 */
+    size: str(col(map,"規格",row)) || str(col(map,"尺寸",row)),
     weight: str(col(map,"重量",row)),
     origin: str(col(map,"產地",row)),
     retail: num(col(map,"零售價",row)),
@@ -386,7 +387,7 @@ function cardHTML(p){
       </div>
       <div class="spec-list">
         <div><b>材質</b>　${p.material||"—"}</div>
-        <div><b>尺寸</b>　${p.size||"—"}</div>
+        <div><b>規格</b>　${p.size||"—"}</div>
       </div>
       <div class="price-row" style="flex-direction:column; align-items:flex-start; gap:2px;">
         ${priceHTML(p)}
@@ -475,7 +476,8 @@ async function openModal(id, keepIndex){
         <div><div class="label">適合場合</div><div class="value">${p.occasions||"—"}</div></div>
         <div><div class="label">產地</div><div class="value">${p.origin||"—"}</div></div>
         <div><div class="label">材質／成分</div><div class="value">${p.material||"—"}</div></div>
-        <div><div class="label">尺寸</div><div class="value">${p.size||"—"}</div></div>
+        <div><div class="label">規格</div><div class="value">${p.size||"—"}</div></div>
+        ${p.weight ? `<div><div class="label">重量</div><div class="value">${p.weight}</div></div>` : ""}
         <div><div class="label">商品客製選項</div><div class="value">${p.custom||"—"}</div></div>
         <div><div class="label">包裝客製選項</div><div class="value">${p.packaging||"—"}</div></div>
         <div><div class="label">最小起訂量</div><div class="value">${p.moq!=null?p.moq+' 件':'洽詢'}</div></div>
