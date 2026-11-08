@@ -350,8 +350,12 @@ function matches(p){
 }
 
 function discountLabel(retail, sale){
-  if(!retail || !sale) return "";
-  const pct = Math.round((sale / retail) * 10);
+  if(!retail || !sale || sale >= retail) return "";
+  /* 折數取兩位、無條件進位：500/660=75.76→76折；尾數是 0 就省略，例如 80→8折 */
+  const raw = Math.round((sale / retail) * 10000) / 100;  // 先四捨五入到小數兩位，避免浮點誤差
+  let pct = Math.ceil(raw);
+  if(pct >= 100) return "";  // 折扣太小（進位後變 100）就不顯示
+  if(pct % 10 === 0) pct = pct / 10;
   return `<span style="font-size:0.65rem;background:var(--vermilion-tint);color:var(--vermilion);padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px;">${pct}折</span>`;
 }
 function priceHTML(p){
