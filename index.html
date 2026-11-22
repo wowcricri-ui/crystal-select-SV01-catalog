@@ -323,12 +323,13 @@ function loadFromSheet(){
   }
 }
 
-/* 「副線主題」：填在主要主題或次要主題都會被篩選到，按鈕固定排在最後。
-   之後要新增其他副線（例如節慶禮盒），加進這個陣列即可。 */
-const SIDE_THEMES = ["婚禮祝福"];
+/* 主題篩選：商品的「主題標籤」或「次要主題」任一個符合，就會出現在該主題底下。
+   SIDE_THEMES 裡的主題，按鈕固定排在篩選列最後面。 */
+const SIDE_THEMES = ["暖心小禮"];
 
 function buildFilterBar(){
-  const mainThemes = [...new Set(PRODUCTS.map(p=>p.theme).filter(t=>t && !SIDE_THEMES.includes(t)))];
+  const allThemes = [...new Set(PRODUCTS.flatMap(p=>[p.theme, p.theme2]).filter(Boolean))];
+  const mainThemes = allThemes.filter(t=>!SIDE_THEMES.includes(t));
   const sideThemes = SIDE_THEMES.filter(t=>PRODUCTS.some(p=>p.theme===t || p.theme2===t));
   const themes = ["全部", ...mainThemes, ...sideThemes];
   const bar = document.getElementById("filterBar");
@@ -341,8 +342,7 @@ function buildFilterBar(){
 }
 
 function matches(p){
-  const themeOk = activeTheme==="全部" || p.theme===activeTheme
-    || (SIDE_THEMES.includes(activeTheme) && p.theme2===activeTheme);
+  const themeOk = activeTheme==="全部" || p.theme===activeTheme || p.theme2===activeTheme;
   const term = searchTerm.trim();
   const searchOk = !term || [p.nameZh,p.nameEn,p.material,p.occasions,p.theme,p.theme2]
     .join(" ").toLowerCase().includes(term.toLowerCase());
