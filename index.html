@@ -325,7 +325,7 @@ function loadFromSheet(){
 
 /* 主題篩選：商品的「主題標籤」或「次要主題」任一個符合，就會出現在該主題底下。
    SIDE_THEMES 裡的主題，按鈕固定排在篩選列最後面。 */
-const SIDE_THEMES = ["暖心小禮"];
+const SIDE_THEMES = ["暖心小禮", "心意澎湃"];  // 依這個順序排在篩選列最後面
 
 function buildFilterBar(){
   const allThemes = [...new Set(PRODUCTS.flatMap(p=>[p.theme, p.theme2]).filter(Boolean))];
